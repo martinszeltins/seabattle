@@ -22,6 +22,13 @@ int main()
     SDL_Renderer * renderer;
     SDL_Texture * titleTexture;
 
+    int gridCellSize = 60;
+    int gridWidth = 10;
+    int gridHeight = 10;
+    int gridYFrom = 280;
+    int playerGridXFrom = 280;
+    int opponentGridXFrom = 1050;
+
     char * fontPath = "TheCaliforniaHustle.ttf";
     int quit = 0;
 
@@ -44,6 +51,35 @@ int main()
         SDL_RenderClear(renderer);
 
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+
+        // Draw the player grid lines
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+        // Horizontal 
+        for (int y = gridYFrom; y < 1 + gridHeight * gridCellSize + gridYFrom; y += gridCellSize) {
+            SDL_RenderDrawLine(renderer, playerGridXFrom, y, playerGridXFrom + (10 * gridCellSize), y);
+        }
+
+        // Vertical
+        for (int x = playerGridXFrom; x < 1 + gridWidth * gridCellSize + playerGridXFrom; x += gridCellSize) {
+            SDL_RenderDrawLine(renderer, x, gridYFrom, x, gridYFrom + (10 * gridCellSize));
+        }
+
+
+        // Draw the opponent grid lines
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+        // Horizontal 
+        for (int y = gridYFrom; y < 1 + gridHeight * gridCellSize + gridYFrom; y += gridCellSize) {
+            SDL_RenderDrawLine(renderer, opponentGridXFrom, y, opponentGridXFrom + (10 * gridCellSize), y);
+        }
+
+        // Vertical
+        for (int x = opponentGridXFrom; x < 1 + gridWidth * gridCellSize + opponentGridXFrom; x += gridCellSize) {
+            SDL_RenderDrawLine(renderer, x, gridYFrom, x, gridYFrom + (10 * gridCellSize));
+        }
+
 
         SDL_RenderPresent(renderer);
     }
