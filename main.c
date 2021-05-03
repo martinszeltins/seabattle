@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -13,17 +14,22 @@ int gridOffsetY = 280;
 int playerGridOffsetX = 280;
 int opponentGridOffsetX = 1050;
 
+typedef enum { 
+    HORIZONTAL, 
+    VERTICAL
+} Orientation;
+
 typedef struct {
     SDL_Rect rect;
     bool isPlaced;
-    char * orientation;
-    int width;
-    int height;
+    Orientation orientation;
 } Ship;
 
 void setTextTextureAndRect(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Texture **textTexture, SDL_Rect *textRect);
 void addPlayerShips(Ship * ships);
 void addOpponentShips(Ship * ships);
+bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rect1EndY, int rect2StartX, int rect2EndX, int rect2StartY, int rect2EndY);
+int randomNumber(int min, int max);
 
 
 /**
@@ -39,8 +45,12 @@ int main()
     SDL_Renderer * renderer;
     SDL_Texture * titleTexture;
 
+    srand(time(NULL));
+
     Ship playerShips[10];
     Ship opponentShips[10];
+
+    return 0;
 
     addPlayerShips(playerShips);
     addOpponentShips(opponentShips);
@@ -150,8 +160,6 @@ void addPlayerShips(Ship * ships)
         ships[i].rect.y    = 0;
         ships[i].rect.w    = 1 * cellSize;
         ships[i].rect.h    = shipSizes[i] * cellSize;
-        ships[i].width     = 1;
-        ships[i].height    = shipSizes[i];
         ships[i].isPlaced  = true;
     }
 }
@@ -171,25 +179,52 @@ void addOpponentShips(Ship * ships)
         bool shipCanBePlaced = false;
         int  tries = 0;
 
+        Orientation newShipOrientation;
+        int newShipX;
+        int newShipY;
+        int newShipW;
+        int newShipH;
+
         while (shipCanBePlaced == false || tries > 10)
         {
-            bool orientation = 'Horizontal';
-            int x = 660;
-            int y = 360;
+            bool rndOrientation = rand() & 1;
 
-            if (orientation == 'Horizontal') { // strcompare function????????
-                int w = shipSizes[i] * cellSize;
-                int h = cellSize;
-                int width = shipSizes[i];
-                int height = 1;
+            if (rndOrientation == 1) {
+                newShipOrientation = HORIZONTAL;
             } else {
-                int w = cellSize;
-                int h = shipSizes[i] * cellSize;
-                int width = 1;
-                int height = shipSizes[i];
+                newShipOrientation = VERTICAL;
             }
 
-            // Loop thru all placed ships
+            newShipX = randomNumber(opponentGridOffsetX, opponentGridOffsetX + (10 * cellSize));
+            newShipX = (newShipX / cellSize) * cellSize;
+
+            newShipY = randomNumber(gridOffsetY, gridOffsetY + (10 * cellSize));
+            newShipY = (newShipY / cellSize) * cellSize;
+
+            if (newShipOrientation == HORIZONTAL) {
+                newShipW = shipSizes[i] * cellSize;
+                newShipH = cellSize;
+            } else {
+                newShipW = cellSize;
+                newShipH = shipSizes[i] * cellSize;
+            }
+
+            /**
+             * Check if the new ship is out of bounds and if it is
+             * then generate a new random ship.
+             */
+            int newShipXEnd = newShipX + newShipW;
+            int newShipYEnd = newShipY + newShipH;
+
+            if (newShipXEnd > opponentGridOffsetX + (10 * cellSize) || newShipYEnd > gridOffsetY + (10 * cellSize)) {
+                continue;
+            }
+
+
+            /**
+             * Loop through all placed ships and determine if the new
+             * ship overlaps the placed ship's boundary.
+             */
             for (int j = 0; j < 10; j++)
             {
                 if (ships[j].isPlaced) {
@@ -199,30 +234,9 @@ void addOpponentShips(Ship * ships)
                     int outerBoundaryYStart = ships[i].rect.y - cellSize;
                     int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
 
-                    int shipCells;
+                    // bool shipsOverlap = rectanglesOverlap()
 
-                    if (ships[i].orientation == 'Horizontal') {
-                        shipCells = ships[i].width;
-                    } else {
-                        shipCells = ships[i].height;
-                    }
-
-                    /**
-                     * Loop thru all the cells of the placed ship to check if
-                     * the cell is inside of the boundary..
-                     */
-                    for (int cell = 0; cell < shipCells; cell++)
-                    {
-                        if (ships[i].orientation == 'Horizontal') {
-                            int cellX = ships[i].rect.x + (cell * cellSize);
-                            int cellY = ships[i].rect.y;
-                        } else {
-                            int cellX = ships[i].rect.x;
-                            int cellY = ships[i].rect.y + (cell * cellSize);
-                        }
-
-                        // Now check if this cell is inside of the boudary.
-                    }
+                    
                 }
             }
 
@@ -233,4 +247,29 @@ void addOpponentShips(Ship * ships)
             }
         }
     }
+}
+
+/**
+ * Determine if two rectangles overlap each other
+ */
+bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rect1EndY,
+                       int rect2StartX, int rect2EndX, int rect2StartY, int rect2EndY)
+{
+    if (rect1StartX >= rect2EndX || rect1EndX <= rect2StartX) {
+        return false;
+    }
+
+    if (rect1StartY >= rect2EndY || rect1EndY <= rect2StartY) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Generate a random number
+ */
+int randomNumber(int min, int max)
+{
+    return rand() % ((max+1) - min) + min;
 }
