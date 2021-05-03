@@ -14,13 +14,16 @@ int playerGridOffsetX = 280;
 int opponentGridOffsetX = 1050;
 
 typedef struct {
-  SDL_Rect rect;
-  bool isPlaced;
+    SDL_Rect rect;
+    bool isPlaced;
+    char * orientation;
+    int width;
+    int height;
 } Ship;
 
 void setTextTextureAndRect(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Texture **textTexture, SDL_Rect *textRect);
 void addPlayerShips(Ship * ships);
-void addOpponentShips(Ship * ships)
+void addOpponentShips(Ship * ships);
 
 
 /**
@@ -147,6 +150,8 @@ void addPlayerShips(Ship * ships)
         ships[i].rect.y    = 0;
         ships[i].rect.w    = 1 * cellSize;
         ships[i].rect.h    = shipSizes[i] * cellSize;
+        ships[i].width     = 1;
+        ships[i].height    = shipSizes[i];
         ships[i].isPlaced  = true;
     }
 }
@@ -159,5 +164,73 @@ void addPlayerShips(Ship * ships)
  */
 void addOpponentShips(Ship * ships)
 {
+    int shipSizes[] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
     
+    for (int i = 0; i < 10; i++)
+    {
+        bool shipCanBePlaced = false;
+        int  tries = 0;
+
+        while (shipCanBePlaced == false || tries > 10)
+        {
+            bool orientation = 'Horizontal';
+            int x = 660;
+            int y = 360;
+
+            if (orientation == 'Horizontal') { // strcompare function????????
+                int w = shipSizes[i] * cellSize;
+                int h = cellSize;
+                int width = shipSizes[i];
+                int height = 1;
+            } else {
+                int w = cellSize;
+                int h = shipSizes[i] * cellSize;
+                int width = 1;
+                int height = shipSizes[i];
+            }
+
+            // Loop thru all placed ships
+            for (int j = 0; j < 10; j++)
+            {
+                if (ships[j].isPlaced) {
+                    int outerBoundaryXStart = ships[i].rect.x - cellSize;
+                    int outerBoundaryXEnd   = ships[i].rect.x + ships[i].rect.w + cellSize;
+
+                    int outerBoundaryYStart = ships[i].rect.y - cellSize;
+                    int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
+
+                    int shipCells;
+
+                    if (ships[i].orientation == 'Horizontal') {
+                        shipCells = ships[i].width;
+                    } else {
+                        shipCells = ships[i].height;
+                    }
+
+                    /**
+                     * Loop thru all the cells of the placed ship to check if
+                     * the cell is inside of the boundary.
+                     */
+                    for (int cell = 0; cell < shipCells; cell++)
+                    {
+                        if (ships[i].orientation == 'Horizontal') {
+                            int cellX = ships[i].rect.x + (cell * cellSize);
+                            int cellY = ships[i].rect.y;
+                        } else {
+                            int cellX = ships[i].rect.x;
+                            int cellY = ships[i].rect.y + (cell * cellSize);
+                        }
+
+                        // Now check if this cell is inside of the boudary.
+                    }
+                }
+            }
+
+            tries++;
+
+            if (tries > 8) {
+                printf("Tries > 8 already!! \n");
+            }
+        }
+    }
 }
