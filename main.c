@@ -209,7 +209,7 @@ void addOpponentShips(Ship * ships)
 
                     /**
                      * Loop thru all the cells of the placed ship to check if
-                     * the cell is inside of the boundary.
+                     * the cell is inside of the boundary..
                      */
                     for (int cell = 0; cell < shipCells; cell++)
                     {
