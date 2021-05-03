@@ -1,12 +1,26 @@
 #include <stdlib.h>
-
+#include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
+int cellSize = 60;
+int gridWidth = 10;
+int gridHeight = 10;
+int gridOffsetY = 280;
+int playerGridOffsetX = 280;
+int opponentGridOffsetX = 1050;
+
+typedef struct {
+  SDL_Rect rect;
+  bool isPlaced;
+} Ship;
+
 void setTextTextureAndRect(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Texture **textTexture, SDL_Rect *textRect);
+void addPlayerShips(Ship * ships);
+void addOpponentShips(Ship * ships)
 
 
 /**
@@ -22,12 +36,13 @@ int main()
     SDL_Renderer * renderer;
     SDL_Texture * titleTexture;
 
-    int gridCellSize = 60;
-    int gridWidth = 10;
-    int gridHeight = 10;
-    int gridYFrom = 280;
-    int playerGridXFrom = 280;
-    int opponentGridXFrom = 1050;
+    Ship playerShips[10];
+    Ship opponentShips[10];
+
+    addPlayerShips(playerShips);
+    addOpponentShips(opponentShips);
+
+    return 0;
 
     char * fontPath = "TheCaliforniaHustle.ttf";
     int quit = 0;
@@ -57,13 +72,13 @@ int main()
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
         // Horizontal 
-        for (int y = gridYFrom; y < 1 + gridHeight * gridCellSize + gridYFrom; y += gridCellSize) {
-            SDL_RenderDrawLine(renderer, playerGridXFrom, y, playerGridXFrom + (10 * gridCellSize), y);
+        for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
+            SDL_RenderDrawLine(renderer, playerGridOffsetX, y, playerGridOffsetX + (10 * cellSize), y);
         }
 
         // Vertical
-        for (int x = playerGridXFrom; x < 1 + gridWidth * gridCellSize + playerGridXFrom; x += gridCellSize) {
-            SDL_RenderDrawLine(renderer, x, gridYFrom, x, gridYFrom + (10 * gridCellSize));
+        for (int x = playerGridOffsetX; x < 1 + gridWidth * cellSize + playerGridOffsetX; x += cellSize) {
+            SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
         }
 
 
@@ -71,13 +86,13 @@ int main()
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
         // Horizontal 
-        for (int y = gridYFrom; y < 1 + gridHeight * gridCellSize + gridYFrom; y += gridCellSize) {
-            SDL_RenderDrawLine(renderer, opponentGridXFrom, y, opponentGridXFrom + (10 * gridCellSize), y);
+        for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
+            SDL_RenderDrawLine(renderer, opponentGridOffsetX, y, opponentGridOffsetX + (10 * cellSize), y);
         }
 
         // Vertical
-        for (int x = opponentGridXFrom; x < 1 + gridWidth * gridCellSize + opponentGridXFrom; x += gridCellSize) {
-            SDL_RenderDrawLine(renderer, x, gridYFrom, x, gridYFrom + (10 * gridCellSize));
+        for (int x = opponentGridOffsetX; x < 1 + gridWidth * cellSize + opponentGridOffsetX; x += cellSize) {
+            SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
         }
 
 
@@ -114,4 +129,35 @@ void setTextTextureAndRect(SDL_Renderer *renderer, int x, int y, char *text, TTF
     textRect->y = y;
     textRect->w = textWidth;
     textRect->h = textHeight;
+}
+
+/**
+ * Add all 10 ships for a player
+ * 
+ * Ship * ship is pointing to the address of the first
+ * element of the ships array which is of type Ship.
+ */
+void addPlayerShips(Ship * ships)
+{
+    int shipSizes[] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
+
+    for (int i = 0; i < 10; i++)
+    {
+        ships[i].rect.x    = 0;
+        ships[i].rect.y    = 0;
+        ships[i].rect.w    = 1 * cellSize;
+        ships[i].rect.h    = shipSizes[i] * cellSize;
+        ships[i].isPlaced  = true;
+    }
+}
+
+/**
+ * Add all 10 ships for the opponent in random order
+ * 
+ * Ship * ship is pointing to the address of the first
+ * element of the ships array which is of type Ship.
+ */
+void addOpponentShips(Ship * ships)
+{
+    
 }
