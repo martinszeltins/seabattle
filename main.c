@@ -225,6 +225,8 @@ void addOpponentShips(Ship * ships)
              * Loop through all placed ships and determine if the new
              * ship overlaps the placed ship's boundary.
              */
+            shipCanBePlaced = true;
+
             for (int j = 0; j < 10; j++)
             {
                 if (ships[j].isPlaced) {
@@ -234,9 +236,15 @@ void addOpponentShips(Ship * ships)
                     int outerBoundaryYStart = ships[i].rect.y - cellSize;
                     int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
 
-                    // bool shipsOverlap = rectanglesOverlap()
+                    bool shipsOverlap = rectanglesOverlap(
+                        newShipX, newShipXEnd, newShipY, newShipYEnd,
+                        outerBoundaryXStart, outerBoundaryXEnd, outerBoundaryYStart, outerBoundaryYEnd
+                    );
 
-                    
+                    if (shipsOverlap) {
+                        shipCanBePlaced = false;
+                        break;
+                    }
                 }
             }
 
