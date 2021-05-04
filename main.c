@@ -50,12 +50,8 @@ int main()
     Ship playerShips[10];
     Ship opponentShips[10];
 
-    return 0;
-
     addPlayerShips(playerShips);
     addOpponentShips(opponentShips);
-
-    return 0;
 
     char * fontPath = "TheCaliforniaHustle.ttf";
     int quit = 0;
@@ -156,11 +152,12 @@ void addPlayerShips(Ship * ships)
 
     for (int i = 0; i < 10; i++)
     {
-        ships[i].rect.x    = 0;
-        ships[i].rect.y    = 0;
-        ships[i].rect.w    = 1 * cellSize;
-        ships[i].rect.h    = shipSizes[i] * cellSize;
-        ships[i].isPlaced  = true;
+        ships[i].rect.x       = 0;
+        ships[i].rect.y       = 0;
+        ships[i].rect.w       = 1 * cellSize;
+        ships[i].rect.h       = shipSizes[i] * cellSize;
+        ships[i].isPlaced     = true;
+        ships[i].orientation  = VERTICAL;
     }
 }
 
@@ -173,6 +170,11 @@ void addPlayerShips(Ship * ships)
 void addOpponentShips(Ship * ships)
 {
     int shipSizes[] = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
+
+    // This needs to be initialized otherwise getting some garbage value.
+    for (int i = 0; i < 10; i++) {
+        ships[i].isPlaced = false;
+    }
     
     for (int i = 0; i < 10; i++)
     {
@@ -185,7 +187,7 @@ void addOpponentShips(Ship * ships)
         int newShipW;
         int newShipH;
 
-        while (shipCanBePlaced == false || tries > 10)
+        while (shipCanBePlaced == false || tries > 1000)
         {
             bool rndOrientation = rand() & 1;
 
@@ -194,12 +196,14 @@ void addOpponentShips(Ship * ships)
             } else {
                 newShipOrientation = VERTICAL;
             }
-
+            
             newShipX = randomNumber(opponentGridOffsetX, opponentGridOffsetX + (10 * cellSize));
             newShipX = (newShipX / cellSize) * cellSize;
+            newShipX = newShipX + 30;
 
             newShipY = randomNumber(gridOffsetY, gridOffsetY + (10 * cellSize));
             newShipY = (newShipY / cellSize) * cellSize;
+            newShipY = newShipY + 40;
 
             if (newShipOrientation == HORIZONTAL) {
                 newShipW = shipSizes[i] * cellSize;
@@ -209,6 +213,7 @@ void addOpponentShips(Ship * ships)
                 newShipH = shipSizes[i] * cellSize;
             }
 
+
             /**
              * Check if the new ship is out of bounds and if it is
              * then generate a new random ship.
@@ -217,6 +222,7 @@ void addOpponentShips(Ship * ships)
             int newShipYEnd = newShipY + newShipH;
 
             if (newShipXEnd > opponentGridOffsetX + (10 * cellSize) || newShipYEnd > gridOffsetY + (10 * cellSize)) {
+                tries++;
                 continue;
             }
 
@@ -229,12 +235,13 @@ void addOpponentShips(Ship * ships)
 
             for (int j = 0; j < 10; j++)
             {
-                if (ships[j].isPlaced) {
-                    int outerBoundaryXStart = ships[i].rect.x - cellSize;
-                    int outerBoundaryXEnd   = ships[i].rect.x + ships[i].rect.w + cellSize;
+                if (ships[j].isPlaced == true)
+                {
+                    int outerBoundaryXStart = ships[j].rect.x - cellSize;
+                    int outerBoundaryXEnd   = ships[j].rect.x + ships[j].rect.w + cellSize;
 
-                    int outerBoundaryYStart = ships[i].rect.y - cellSize;
-                    int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
+                    int outerBoundaryYStart = ships[j].rect.y - cellSize;
+                    int outerBoundaryYEnd   = ships[j].rect.y + ships[j].rect.h + cellSize;
 
                     bool shipsOverlap = rectanglesOverlap(
                         newShipX, newShipXEnd, newShipY, newShipYEnd,
@@ -248,12 +255,22 @@ void addOpponentShips(Ship * ships)
                 }
             }
 
-            tries++;
+            if (shipCanBePlaced == false) {
+                tries++;
+            }
 
-            if (tries > 8) {
-                printf("Tries > 8 already!! \n");
+            if (tries > 1000) {
+                printf("Error: tries > 1000! \n");
+                exit(1);
             }
         }
+
+        ships[i].rect.x       = newShipX;
+        ships[i].rect.y       = newShipY;
+        ships[i].rect.w       = newShipW;
+        ships[i].rect.h       = newShipH;
+        ships[i].isPlaced     = true;
+        ships[i].orientation  = newShipOrientation;
     }
 }
 
