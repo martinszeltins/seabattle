@@ -31,6 +31,7 @@ void addOpponentShips(Ship * ships);
 bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rect1EndY, int rect2StartX, int rect2EndX, int rect2StartY, int rect2EndY);
 int randomNumber(int min, int max);
 void drawGridLines(SDL_Renderer * renderer);
+void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips);
 
 
 /**
@@ -76,6 +77,8 @@ int main()
         SDL_RenderClear(renderer);
 
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+        drawOpponentShips(renderer, opponentShips);
 
         drawGridLines(renderer);
 
@@ -302,5 +305,16 @@ void drawGridLines(SDL_Renderer * renderer)
     // Vertical
     for (int x = opponentGridOffsetX; x < 1 + gridWidth * cellSize + opponentGridOffsetX; x += cellSize) {
         SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
+    }
+}
+
+/**
+ * Draw the opponent ships
+ */
+void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips)
+{
+    for (int i = 0; i < 10; i++) {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        SDL_RenderFillRect(renderer, &opponentShips[i].rect);
     }
 }
