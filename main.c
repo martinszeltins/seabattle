@@ -14,6 +14,7 @@ int gridOffsetY = 280;
 int placingShipIndex = 0;
 int playerGridOffsetX = 280;
 int opponentGridOffsetX = 1050;
+int placedShips = 0;
 
 typedef enum { 
     HORIZONTAL, 
@@ -83,11 +84,17 @@ int main()
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
                         case SDLK_RETURN:
-                            placeShip(playerShips);
+                            if (placedShips < 10) {
+                                placeShip(playerShips);
+                            }
+
                             break;
 
                         case SDLK_SPACE:
-                            rotateShip(playerShips);
+                            if (placedShips < 10) {
+                                rotateShip(playerShips);
+                            }
+
                             break;
                     
                         case SDLK_ESCAPE:
@@ -96,33 +103,41 @@ int main()
 
                         case SDLK_w:
                         case SDLK_UP:
-                            if (playerShips[placingShipIndex].rect.y != gridOffsetY) {
-                                playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y - cellSize;
+                            if (placedShips < 10) {
+                                if (playerShips[placingShipIndex].rect.y != gridOffsetY) {
+                                    playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y - cellSize;
+                                }
                             }
 
                             break;
 
                         case SDLK_s:
                         case SDLK_DOWN:
-                            if ((playerShips[placingShipIndex].rect.y + playerShips[placingShipIndex].rect.h) < gridOffsetY + (10 * cellSize)) {
-                                playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y + cellSize;
+                            if (placedShips < 10) {
+                                if ((playerShips[placingShipIndex].rect.y + playerShips[placingShipIndex].rect.h) < gridOffsetY + (10 * cellSize)) {
+                                    playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y + cellSize;
+                                }
                             }
 
                             break;
 
                         case SDLK_a:
                         case SDLK_LEFT:
-                            if (playerShips[placingShipIndex].rect.x != playerGridOffsetX) {
-                                playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x - cellSize;
+                            if (placedShips < 10) {
+                                if (playerShips[placingShipIndex].rect.x != playerGridOffsetX) {
+                                    playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x - cellSize;
+                                }
                             }
 
                             break;
 
                         case SDLK_d:
                         case SDLK_RIGHT:
-                            if ((playerShips[placingShipIndex].rect.x + playerShips[placingShipIndex].rect.w) < playerGridOffsetX + (10 * cellSize)) {
-                                playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x + cellSize;
-                                break;
+                            if (placedShips < 10) {
+                                if ((playerShips[placingShipIndex].rect.x + playerShips[placingShipIndex].rect.w) < playerGridOffsetX + (10 * cellSize)) {
+                                    playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x + cellSize;
+                                    break;
+                                }
                             }
                     }
 
@@ -454,6 +469,10 @@ void placeShip(Ship * ships)
 
     ships[placingShipIndex].isPlaced = true;
     placingShipIndex++;
+
+    if (placedShips < 10) {
+        placedShips++;
+    }
 }
 
 /**
