@@ -11,6 +11,7 @@ int cellSize = 60;
 int gridWidth = 10;
 int gridHeight = 10;
 int gridOffsetY = 280;
+int placingShipIndex = 0;
 int playerGridOffsetX = 280;
 int opponentGridOffsetX = 1050;
 
@@ -67,9 +68,53 @@ int main()
 
     while (!quit)
     {
-        while (SDL_PollEvent(&event) == 1) {
-            if (event.type == SDL_QUIT) {
-                quit = 1;
+        while (SDL_PollEvent(&event) == 1)
+        {
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                    quit = 1;
+                    break;
+
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                        case SDLK_ESCAPE:
+                            quit = 1;
+                            break;
+
+                        case SDLK_w:
+                        case SDLK_UP:
+                            if (playerShips[placingShipIndex].rect.y != gridOffsetY) {
+                                playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y - cellSize;
+                            }
+
+                            break;
+
+                        case SDLK_s:
+                        case SDLK_DOWN:
+                            if ((playerShips[placingShipIndex].rect.y + playerShips[placingShipIndex].rect.h) < gridOffsetY + (10 * cellSize)) {
+                                playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y + cellSize;
+                            }
+
+                            break;
+
+                        case SDLK_a:
+                        case SDLK_LEFT:
+                            if (playerShips[placingShipIndex].rect.x != playerGridOffsetX) {
+                                playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x - cellSize;
+                            }
+
+                            break;
+
+                        case SDLK_d:
+                        case SDLK_RIGHT:
+                            if ((playerShips[placingShipIndex].rect.x + playerShips[placingShipIndex].rect.w) < playerGridOffsetX + (10 * cellSize)) {
+                                playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x + cellSize;
+                                break;
+                            }
+                    }
+
+                    break;
             }
         }
 
@@ -80,10 +125,16 @@ int main()
         // Draw the title text
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        drawOpponentShips(renderer, opponentShips);
+
+        if (playerShips[0].isPlaced) {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        } else {
+            SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
+        }
+
         SDL_RenderFillRect(renderer, &playerShips[0].rect);
 
-        drawOpponentShips(renderer, opponentShips);
         drawGridLines(renderer);
 
         SDL_RenderPresent(renderer);
@@ -137,7 +188,7 @@ void addPlayerShips(Ship * ships)
         ships[i].rect.y       = gridOffsetY;
         ships[i].rect.w       = 1 * cellSize;
         ships[i].rect.h       = shipSizes[i] * cellSize;
-        ships[i].isPlaced     = true;
+        ships[i].isPlaced     = false;
         ships[i].orientation  = VERTICAL;
     }
 }
