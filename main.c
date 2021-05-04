@@ -138,8 +138,8 @@ int main()
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
         drawOpponentShips(renderer, opponentShips);
-        drawPlacingShip(renderer, playerShips);
         drawPlacedShips(renderer, playerShips);
+        drawPlacingShip(renderer, playerShips);
 
         drawGridLines(renderer);
 
@@ -432,8 +432,36 @@ void placeShip(Ship * ships)
  * Draw the currently placing ship
  */
 void drawPlacingShip(SDL_Renderer * renderer, Ship * ships)
-{
+{   
+    bool shipsOverlap = false;
+
     SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (ships[i].isPlaced)
+        {
+            int placingShipX = ships[placingShipIndex].rect.x;
+            int placingShipY = ships[placingShipIndex].rect.y;
+            int placingShipXEnd = placingShipX + ships[placingShipIndex].rect.w;
+            int placingShipYEnd = placingShipY + ships[placingShipIndex].rect.h;
+
+            int outerBoundaryXStart = ships[i].rect.x - cellSize;
+            int outerBoundaryXEnd   = ships[i].rect.x + ships[i].rect.w + cellSize;
+            int outerBoundaryYStart = ships[i].rect.y - cellSize;
+            int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
+
+            shipsOverlap = rectanglesOverlap(
+                placingShipX, placingShipXEnd, placingShipY, placingShipYEnd,
+                outerBoundaryXStart, outerBoundaryXEnd, outerBoundaryYStart, outerBoundaryYEnd
+            );
+
+            if (shipsOverlap) {
+                SDL_SetRenderDrawColor(renderer, 75, 0, 0, 0);
+                break;
+            }
+        }
+    }
 
     SDL_RenderFillRect(renderer, &ships[placingShipIndex].rect);
 }
