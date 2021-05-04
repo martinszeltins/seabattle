@@ -34,6 +34,9 @@ int randomNumber(int min, int max);
 void drawGridLines(SDL_Renderer * renderer);
 void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips);
 void rotateShip(Ship * playerShips);
+void placeShip(Ship * ships);
+void drawPlacingShip(SDL_Renderer * renderer, Ship * ships);
+void drawPlacedShips(SDL_Renderer * renderer, Ship * ships);
 
 
 /**
@@ -79,6 +82,10 @@ int main()
 
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
+                        case SDLK_RETURN:
+                            placeShip(playerShips);
+                            break;
+
                         case SDLK_SPACE:
                             rotateShip(playerShips);
                             break;
@@ -131,14 +138,8 @@ int main()
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
         drawOpponentShips(renderer, opponentShips);
-
-        if (playerShips[0].isPlaced) {
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-        } else {
-            SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
-        }
-
-        SDL_RenderFillRect(renderer, &playerShips[0].rect);
+        drawPlacingShip(renderer, playerShips);
+        drawPlacedShips(renderer, playerShips);
 
         drawGridLines(renderer);
 
@@ -414,6 +415,43 @@ void rotateShip(Ship * ships)
             ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
             ships[placingShipIndex].rect.w = h;
             ships[placingShipIndex].orientation = VERTICAL;
+        }
+    }
+}
+
+/**
+ * Place current ship in position
+ */
+void placeShip(Ship * ships)
+{
+    ships[placingShipIndex].isPlaced = true;
+    placingShipIndex++;
+}
+
+/**
+ * Draw the currently placing ship
+ */
+void drawPlacingShip(SDL_Renderer * renderer, Ship * ships)
+{
+    if (ships[placingShipIndex].isPlaced) {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    } else {
+        SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
+    }
+
+    SDL_RenderFillRect(renderer, &ships[placingShipIndex].rect);
+}
+
+/**
+ * Draw the player's placed ships
+ */
+void drawPlacedShips(SDL_Renderer * renderer, Ship * ships)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+
+    for (int i = 0; i < 10; i++) {
+        if (ships[i].isPlaced) {
+            SDL_RenderFillRect(renderer, &ships[i].rect);
         }
     }
 }
