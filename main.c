@@ -426,6 +426,7 @@ void placeShip(Ship * ships)
 {
     bool shipsOverlap = false;
 
+    // Check if the new ship overlaps another
     for (int i = 0; i < 10; i++)
     {
         if (ships[i].isPlaced)
@@ -444,13 +445,15 @@ void placeShip(Ship * ships)
                 placingShipX, placingShipXEnd, placingShipY, placingShipYEnd,
                 outerBoundaryXStart, outerBoundaryXEnd, outerBoundaryYStart, outerBoundaryYEnd
             );
+
+            if (shipsOverlap) {
+                return;
+            }
         }
     }
 
-    if (!shipsOverlap) {
-        ships[placingShipIndex].isPlaced = true;
-        placingShipIndex++;
-    }
+    ships[placingShipIndex].isPlaced = true;
+    placingShipIndex++;
 }
 
 /**
