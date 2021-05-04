@@ -33,6 +33,7 @@ bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rec
 int randomNumber(int min, int max);
 void drawGridLines(SDL_Renderer * renderer);
 void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips);
+void rotateShip(Ship * playerShips);
 
 
 /**
@@ -78,6 +79,10 @@ int main()
 
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
+                        case SDLK_SPACE:
+                            rotateShip(playerShips);
+                            break;
+                    
                         case SDLK_ESCAPE:
                             quit = 1;
                             break;
@@ -372,4 +377,14 @@ void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips)
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
         SDL_RenderFillRect(renderer, &opponentShips[i].rect);
     }
+}
+
+/**
+ * Rotate ship
+ */
+void rotateShip(Ship * ships)
+{
+    int h = ships[placingShipIndex].rect.h;
+    ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
+    playerShips[placingShipIndex].rect.w = h;
 }
