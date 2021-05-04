@@ -384,7 +384,36 @@ void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips)
  */
 void rotateShip(Ship * ships)
 {
-    int h = ships[placingShipIndex].rect.h;
-    ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
-    playerShips[placingShipIndex].rect.w = h;
+    if (ships[placingShipIndex].orientation == VERTICAL)
+    {
+        if ((ships[placingShipIndex].rect.x + ships[placingShipIndex].rect.h) > playerGridOffsetX + (10 * cellSize)) {
+            ships[placingShipIndex].rect.x = ships[placingShipIndex].rect.x - ships[placingShipIndex].rect.h + cellSize;
+
+            int h = ships[placingShipIndex].rect.h;
+            ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
+            ships[placingShipIndex].rect.w = h;
+            ships[placingShipIndex].orientation = HORIZONTAL;
+        } else {
+            int h = ships[placingShipIndex].rect.h;
+            ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
+            ships[placingShipIndex].rect.w = h;
+            ships[placingShipIndex].orientation = HORIZONTAL;
+        }
+    }
+    else if (ships[placingShipIndex].orientation == HORIZONTAL)
+    {
+        if ((ships[placingShipIndex].rect.y + ships[placingShipIndex].rect.w) > gridOffsetY + (10 * cellSize)) {
+            ships[placingShipIndex].rect.y = ships[placingShipIndex].rect.y - ships[placingShipIndex].rect.w + cellSize;
+
+            int h = ships[placingShipIndex].rect.h;
+            ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
+            ships[placingShipIndex].rect.w = h;
+            ships[placingShipIndex].orientation = VERTICAL;
+        } else {
+            int h = ships[placingShipIndex].rect.h;
+            ships[placingShipIndex].rect.h = ships[placingShipIndex].rect.w;
+            ships[placingShipIndex].rect.w = h;
+            ships[placingShipIndex].orientation = VERTICAL;
+        }
+    }
 }
