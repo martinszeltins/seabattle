@@ -390,7 +390,7 @@ void drawGridLines(SDL_Renderer * renderer)
 void drawOpponentShips(SDL_Renderer * renderer, Ship * opponentShips)
 {
     for (int i = 0; i < 10; i++) {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        SDL_SetRenderDrawColor(renderer, 35, 35, 35, 0);
         SDL_RenderFillRect(renderer, &opponentShips[i].rect);
     }
 }
