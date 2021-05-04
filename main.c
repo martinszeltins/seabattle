@@ -433,11 +433,7 @@ void placeShip(Ship * ships)
  */
 void drawPlacingShip(SDL_Renderer * renderer, Ship * ships)
 {
-    if (ships[placingShipIndex].isPlaced) {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    } else {
-        SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
-    }
+    SDL_SetRenderDrawColor(renderer, 75, 75, 75, 0);
 
     SDL_RenderFillRect(renderer, &ships[placingShipIndex].rect);
 }
