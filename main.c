@@ -424,8 +424,33 @@ void rotateShip(Ship * ships)
  */
 void placeShip(Ship * ships)
 {
-    ships[placingShipIndex].isPlaced = true;
-    placingShipIndex++;
+    bool shipsOverlap = false;
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (ships[i].isPlaced)
+        {
+            int placingShipX = ships[placingShipIndex].rect.x;
+            int placingShipY = ships[placingShipIndex].rect.y;
+            int placingShipXEnd = placingShipX + ships[placingShipIndex].rect.w;
+            int placingShipYEnd = placingShipY + ships[placingShipIndex].rect.h;
+
+            int outerBoundaryXStart = ships[i].rect.x - cellSize;
+            int outerBoundaryXEnd   = ships[i].rect.x + ships[i].rect.w + cellSize;
+            int outerBoundaryYStart = ships[i].rect.y - cellSize;
+            int outerBoundaryYEnd   = ships[i].rect.y + ships[i].rect.h + cellSize;
+
+            shipsOverlap = rectanglesOverlap(
+                placingShipX, placingShipXEnd, placingShipY, placingShipYEnd,
+                outerBoundaryXStart, outerBoundaryXEnd, outerBoundaryYStart, outerBoundaryYEnd
+            );
+        }
+    }
+
+    if (!shipsOverlap) {
+        ships[placingShipIndex].isPlaced = true;
+        placingShipIndex++;
+    }
 }
 
 /**
