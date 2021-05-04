@@ -159,6 +159,12 @@ int main()
         drawGridLines(renderer);
 
         SDL_RenderPresent(renderer);
+
+        /**
+         * Limit the framerate so it doesn't run as fast as possible.
+         * 25 fps seems more then enough for this game.
+         */
+        SDL_Delay(1000 / 25);
     }
 
     SDL_DestroyTexture(titleTexture);
