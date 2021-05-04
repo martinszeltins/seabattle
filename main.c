@@ -73,13 +73,17 @@ int main()
             }
         }
 
+        // Clear the screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
 
+        // Draw the title text
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-        drawOpponentShips(renderer, opponentShips);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+        SDL_RenderFillRect(renderer, &playerShips[0].rect);
 
+        drawOpponentShips(renderer, opponentShips);
         drawGridLines(renderer);
 
         SDL_RenderPresent(renderer);
@@ -129,8 +133,8 @@ void addPlayerShips(Ship * ships)
 
     for (int i = 0; i < 10; i++)
     {
-        ships[i].rect.x       = 0;
-        ships[i].rect.y       = 0;
+        ships[i].rect.x       = playerGridOffsetX;
+        ships[i].rect.y       = gridOffsetY;
         ships[i].rect.w       = 1 * cellSize;
         ships[i].rect.h       = shipSizes[i] * cellSize;
         ships[i].isPlaced     = true;
