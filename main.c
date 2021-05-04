@@ -30,6 +30,7 @@ void addPlayerShips(Ship * ships);
 void addOpponentShips(Ship * ships);
 bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rect1EndY, int rect2StartX, int rect2EndX, int rect2StartY, int rect2EndY);
 int randomNumber(int min, int max);
+void drawGridLines(SDL_Renderer * renderer);
 
 
 /**
@@ -76,34 +77,7 @@ int main()
 
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-
-        // Draw the player grid lines
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-        // Horizontal 
-        for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
-            SDL_RenderDrawLine(renderer, playerGridOffsetX, y, playerGridOffsetX + (10 * cellSize), y);
-        }
-
-        // Vertical
-        for (int x = playerGridOffsetX; x < 1 + gridWidth * cellSize + playerGridOffsetX; x += cellSize) {
-            SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
-        }
-
-
-        // Draw the opponent grid lines
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-        // Horizontal 
-        for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
-            SDL_RenderDrawLine(renderer, opponentGridOffsetX, y, opponentGridOffsetX + (10 * cellSize), y);
-        }
-
-        // Vertical
-        for (int x = opponentGridOffsetX; x < 1 + gridWidth * cellSize + opponentGridOffsetX; x += cellSize) {
-            SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
-        }
-
+        drawGridLines(renderer);
 
         SDL_RenderPresent(renderer);
     }
@@ -297,4 +271,36 @@ bool rectanglesOverlap(int rect1StartX, int rect1EndX, int  rect1StartY, int rec
 int randomNumber(int min, int max)
 {
     return rand() % ((max+1) - min) + min;
+}
+
+/**
+ * The the grid lines for both players
+ */
+void drawGridLines(SDL_Renderer * renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    // Horizontal 
+    for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
+        SDL_RenderDrawLine(renderer, playerGridOffsetX, y, playerGridOffsetX + (10 * cellSize), y);
+    }
+
+    // Vertical
+    for (int x = playerGridOffsetX; x < 1 + gridWidth * cellSize + playerGridOffsetX; x += cellSize) {
+        SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
+    }
+
+
+    // Draw the opponent grid lines
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    // Horizontal 
+    for (int y = gridOffsetY; y < 1 + gridHeight * cellSize + gridOffsetY; y += cellSize) {
+        SDL_RenderDrawLine(renderer, opponentGridOffsetX, y, opponentGridOffsetX + (10 * cellSize), y);
+    }
+
+    // Vertical
+    for (int x = opponentGridOffsetX; x < 1 + gridWidth * cellSize + opponentGridOffsetX; x += cellSize) {
+        SDL_RenderDrawLine(renderer, x, gridOffsetY, x, gridOffsetY + (10 * cellSize));
+    }
 }
