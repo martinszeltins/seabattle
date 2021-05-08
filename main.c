@@ -104,14 +104,14 @@ int main()
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
                         case SDLK_RETURN:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 placeShip(playerShips);
                             }
 
                             break;
 
                         case SDLK_SPACE:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 rotateShip(playerShips);
                             }
 
@@ -127,7 +127,7 @@ int main()
 
                         case SDLK_w:
                         case SDLK_UP:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 if (playerShips[placingShipIndex].rect.y != gridOffsetY) {
                                     playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y - cellSize;
                                 }
@@ -143,7 +143,7 @@ int main()
 
                         case SDLK_s:
                         case SDLK_DOWN:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 if ((playerShips[placingShipIndex].rect.y + playerShips[placingShipIndex].rect.h) < gridOffsetY + (10 * cellSize)) {
                                     playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y + cellSize;
                                 }
@@ -159,7 +159,7 @@ int main()
 
                         case SDLK_a:
                         case SDLK_LEFT:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 if (playerShips[placingShipIndex].rect.x != playerGridOffsetX) {
                                     playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x - cellSize;
                                 }
@@ -175,7 +175,7 @@ int main()
 
                         case SDLK_d:
                         case SDLK_RIGHT:
-                            if (placedShips < 10) {
+                            if (!isShooting) {
                                 if ((playerShips[placingShipIndex].rect.x + playerShips[placingShipIndex].rect.w) < playerGridOffsetX + (10 * cellSize)) {
                                     playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x + cellSize;
                                 }
@@ -203,7 +203,10 @@ int main()
 
         drawOpponentShips(renderer, opponentShips);
         drawPlacedShips(renderer, playerShips);
-        drawPlacingShip(renderer, playerShips);
+
+        if (!isShooting) {
+            drawPlacingShip(renderer, playerShips);
+        }
 
         if (isShooting) {
             drawPlayerCursor(renderer);
@@ -529,6 +532,7 @@ void placeShip(Ship * ships)
         }
     }
 
+    printf("ships[%d].isPlaced = true; \n", placingShipIndex);
     ships[placingShipIndex].isPlaced = true;
 
     printf("placedShips: %d \n", placedShips);
@@ -542,6 +546,11 @@ void placeShip(Ship * ships)
         printf("isShooting = true; \n");
         isShooting = true;
     }
+
+    printf("-------- After ------- \n");
+    printf("placedShips: %d \n", placedShips);
+    printf("placingShipIndex: %d \n", placingShipIndex);
+    printf("isShooting: %d \n", isShooting);
 }
 
 /**
