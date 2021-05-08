@@ -1,3 +1,10 @@
+/*
+ *  Sea battle game
+ *
+ *	Author: Martins Zeltins <martins@martinsz.lv>
+ *	Date: May 1, 2021
+ */
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
@@ -58,7 +65,6 @@ void drawPlayerShots(SDL_Renderer * renderer);
 void shootAtPlayer(Ship * playerShips);
 void drawOpponentShots(SDL_Renderer * renderer);
 
-
 /**
  * A program to demonstrate text rendering
  * using the SDL2 library.
@@ -89,7 +95,7 @@ int main()
     SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED , &window, &renderer);
  
     font = TTF_OpenFont(fontPath, 80);
-    setTextTextureAndRect(renderer, 760, 60, "Sea Battle", font, &titleTexture, &titleRect);
+    setTextTextureAndRect(renderer, 760, 60, "Kara laivas", font, &titleTexture, &titleRect);
 
     while (!quit)
     {
