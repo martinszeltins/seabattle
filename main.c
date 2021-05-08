@@ -532,25 +532,14 @@ void placeShip(Ship * ships)
         }
     }
 
-    printf("ships[%d].isPlaced = true; \n", placingShipIndex);
     ships[placingShipIndex].isPlaced = true;
-
-    printf("placedShips: %d \n", placedShips);
-    printf("placingShipIndex: %d \n", placingShipIndex);
-    printf("isShooting: %d \n", isShooting);
 
     if (placedShips < 9) {
         placedShips++;
         placingShipIndex++;
     } else {
-        printf("isShooting = true; \n");
         isShooting = true;
     }
-
-    printf("-------- After ------- \n");
-    printf("placedShips: %d \n", placedShips);
-    printf("placingShipIndex: %d \n", placingShipIndex);
-    printf("isShooting: %d \n", isShooting);
 }
 
 /**
