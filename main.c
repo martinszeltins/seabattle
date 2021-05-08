@@ -7,15 +7,6 @@
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
-int cellSize = 60;
-int gridWidth = 10;
-int gridHeight = 10;
-int gridOffsetY = 280;
-int placingShipIndex = 0;
-int playerGridOffsetX = 280;
-int opponentGridOffsetX = 1050;
-int placedShips = 0;
-
 typedef enum { 
     HORIZONTAL, 
     VERTICAL
@@ -26,6 +17,28 @@ typedef struct {
     bool isPlaced;
     Orientation orientation;
 } Ship;
+
+typedef struct {
+    SDL_Rect rect;
+    bool isHit;
+} Shot;
+
+int cellSize = 60;
+int gridWidth = 10;
+int gridHeight = 10;
+int gridOffsetY = 280;
+int placingShipIndex = 0;
+int playerGridOffsetX = 280;
+int opponentGridOffsetX = 1050;
+int placedShips = 0;
+SDL_Rect playerCursor;
+int playerHits = 0;
+int opponentHits = 0;
+int playerShotsCount = 0;
+int opponentShotsCount = 0;
+Shot playerShots[100];
+Shot opponentShots[100];
+bool isShooting = false;
 
 void setTextTextureAndRect(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Texture **textTexture, SDL_Rect *textRect);
 void addPlayerShips(Ship * ships);
@@ -38,6 +51,12 @@ void rotateShip(Ship * playerShips);
 void placeShip(Ship * ships);
 void drawPlacingShip(SDL_Renderer * renderer, Ship * ships);
 void drawPlacedShips(SDL_Renderer * renderer, Ship * ships);
+void drawPlayerCursor(SDL_Renderer * renderer);
+void resetPlayerCursor();
+void shootAtOpponent(SDL_Renderer * renderer, Ship * opponentShips, Ship * playerShips);
+void drawPlayerShots(SDL_Renderer * renderer);
+void shootAtPlayer(Ship * playerShips);
+void drawOpponentShots(SDL_Renderer * renderer);
 
 
 /**
@@ -60,6 +79,7 @@ int main()
 
     addPlayerShips(playerShips);
     addOpponentShips(opponentShips);
+    resetPlayerCursor();
 
     char * fontPath = "TheCaliforniaHustle.ttf";
     int quit = 0;
@@ -95,6 +115,10 @@ int main()
                                 rotateShip(playerShips);
                             }
 
+                            if (isShooting) {
+                                shootAtOpponent(renderer, opponentShips, playerShips);
+                            }
+
                             break;
                     
                         case SDLK_ESCAPE:
@@ -109,6 +133,12 @@ int main()
                                 }
                             }
 
+                            if (isShooting) {
+                                if (playerCursor.y != gridOffsetY) {
+                                    playerCursor.y = playerCursor.y - cellSize;
+                                }
+                            }
+
                             break;
 
                         case SDLK_s:
@@ -116,6 +146,12 @@ int main()
                             if (placedShips < 10) {
                                 if ((playerShips[placingShipIndex].rect.y + playerShips[placingShipIndex].rect.h) < gridOffsetY + (10 * cellSize)) {
                                     playerShips[placingShipIndex].rect.y = playerShips[placingShipIndex].rect.y + cellSize;
+                                }
+                            }
+
+                            if (isShooting) {
+                                if ((playerCursor.y + playerCursor.h) < gridOffsetY + (10 * cellSize)) {
+                                    playerCursor.y = playerCursor.y + cellSize;
                                 }
                             }
 
@@ -129,6 +165,12 @@ int main()
                                 }
                             }
 
+                            if (isShooting) {
+                                if (playerCursor.x != opponentGridOffsetX) {
+                                    playerCursor.x = playerCursor.x - cellSize;
+                                }
+                            }
+
                             break;
 
                         case SDLK_d:
@@ -136,9 +178,16 @@ int main()
                             if (placedShips < 10) {
                                 if ((playerShips[placingShipIndex].rect.x + playerShips[placingShipIndex].rect.w) < playerGridOffsetX + (10 * cellSize)) {
                                     playerShips[placingShipIndex].rect.x = playerShips[placingShipIndex].rect.x + cellSize;
-                                    break;
                                 }
                             }
+
+                            if (isShooting) {
+                                if ((playerCursor.x + playerCursor.w) < opponentGridOffsetX + (10 * cellSize)) {
+                                    playerCursor.x = playerCursor.x + cellSize;
+                                }
+                            }
+
+                            break;
                     }
 
                     break;
@@ -155,6 +204,13 @@ int main()
         drawOpponentShips(renderer, opponentShips);
         drawPlacedShips(renderer, playerShips);
         drawPlacingShip(renderer, playerShips);
+
+        if (isShooting) {
+            drawPlayerCursor(renderer);
+        }
+
+        drawPlayerShots(renderer);
+        drawOpponentShots(renderer);
 
         drawGridLines(renderer);
 
@@ -474,10 +530,17 @@ void placeShip(Ship * ships)
     }
 
     ships[placingShipIndex].isPlaced = true;
-    placingShipIndex++;
 
-    if (placedShips < 10) {
+    printf("placedShips: %d \n", placedShips);
+    printf("placingShipIndex: %d \n", placingShipIndex);
+    printf("isShooting: %d \n", isShooting);
+
+    if (placedShips < 9) {
         placedShips++;
+        placingShipIndex++;
+    } else {
+        printf("isShooting = true; \n");
+        isShooting = true;
     }
 }
 
@@ -530,5 +593,170 @@ void drawPlacedShips(SDL_Renderer * renderer, Ship * ships)
         if (ships[i].isPlaced) {
             SDL_RenderFillRect(renderer, &ships[i].rect);
         }
+    }
+}
+
+/**
+ * Reset the player's cursor to start position
+ */
+void resetPlayerCursor()
+{
+    playerCursor.x = opponentGridOffsetX;
+    playerCursor.y = gridOffsetY;
+    playerCursor.w = cellSize;
+    playerCursor.h = cellSize;
+}
+
+/**
+ * Draw the player's cursor
+ */
+void drawPlayerCursor(SDL_Renderer * renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 187, 74, 0, 0);
+    SDL_RenderFillRect(renderer, &playerCursor);
+}
+
+/**
+ * Make a shot at the opponent
+ */
+void shootAtOpponent(SDL_Renderer * renderer, Ship * opponentShips, Ship * playerShips)
+{
+    bool doOverlap  = false;
+    bool isHit      = false;
+
+    for (int i = 0; i < 10; i++)
+    {
+        int playerCursorX = playerCursor.x;
+        int playerCursorY = playerCursor.y;
+        int playerCursorXEnd = playerCursorX + playerCursor.w;
+        int playerCursorYEnd = playerCursorY + playerCursor.h;
+
+        int shipXStart = opponentShips[i].rect.x;
+        int shipXEnd   = opponentShips[i].rect.x + opponentShips[i].rect.w;
+        int shipYStart = opponentShips[i].rect.y;
+        int shipYEnd   = opponentShips[i].rect.y + opponentShips[i].rect.h;
+
+        doOverlap = rectanglesOverlap(
+            playerCursorX, playerCursorXEnd, playerCursorY, playerCursorYEnd,
+            shipXStart, shipXEnd, shipYStart, shipYEnd
+        );
+
+        if (doOverlap) {
+            isHit = true;
+            break;
+        }
+    }
+
+    playerShots[playerShotsCount].rect.x = playerCursor.x;
+    playerShots[playerShotsCount].rect.y = playerCursor.y;
+    playerShots[playerShotsCount].rect.w = playerCursor.w;
+    playerShots[playerShotsCount].rect.h = playerCursor.h;
+
+    if (isHit) {
+        playerHits++;
+        playerShots[playerShotsCount].isHit = true;
+    } else {
+        playerShots[playerShotsCount].isHit = false;
+    }
+
+    playerShotsCount++;
+
+    drawPlayerShots(renderer);
+    drawGridLines(renderer);
+    SDL_RenderPresent(renderer);
+
+    SDL_Delay(500);
+
+    shootAtPlayer(playerShips);
+}
+
+/**
+ * Make a shot at the player
+ */
+void shootAtPlayer(Ship * playerShips)
+{
+    /**
+     * Shoots in the same place twice
+     * Shoots off bounds
+     */
+    
+    int shotX, shotY, shotXEnd, shotYEnd;
+    bool doOverlap  = false;
+    bool isHit      = false;
+
+    // Make a random shot somewhere in the player's field
+    shotX = randomNumber(playerGridOffsetX, playerGridOffsetX + (10 * cellSize));
+    shotX = (shotX / cellSize) * cellSize;
+    shotX = shotX + 40;
+    shotXEnd = shotX + cellSize;
+    
+    shotY = randomNumber(gridOffsetY, gridOffsetY + (10 * cellSize));
+    shotY = (shotY / cellSize) * cellSize;
+    shotY = shotY + 40;
+    shotYEnd = shotY + cellSize;
+
+    // Now check if we hit or miss
+    for (int i = 0; i < 10; i++)
+    {
+        int shipXStart = playerShips[i].rect.x;
+        int shipXEnd   = playerShips[i].rect.x + playerShips[i].rect.w;
+        int shipYStart = playerShips[i].rect.y;
+        int shipYEnd   = playerShips[i].rect.y + playerShips[i].rect.h;
+
+        doOverlap = rectanglesOverlap(
+            shotX, shotXEnd, shotY, shotYEnd,
+            shipXStart, shipXEnd, shipYStart, shipYEnd
+        );
+
+        if (doOverlap) {
+            isHit = true;
+            break;
+        }
+    }
+
+    opponentShots[opponentShotsCount].rect.x = shotX;
+    opponentShots[opponentShotsCount].rect.y = shotY;
+    opponentShots[opponentShotsCount].rect.w = cellSize;
+    opponentShots[opponentShotsCount].rect.h = cellSize;
+
+    if (isHit) {
+        opponentHits++;
+        opponentShots[opponentShotsCount].isHit = true;
+    } else {
+        opponentShots[opponentShotsCount].isHit = false;
+    }
+
+    opponentShotsCount++;
+}
+
+/**
+ * Draw the player's made shots
+ */
+void drawPlayerShots(SDL_Renderer * renderer)
+{
+    for (int i = 0; i < playerShotsCount; i++) {
+        if (playerShots[i].isHit) {
+            SDL_SetRenderDrawColor(renderer, 160, 18, 18, 0);
+        } else {
+            SDL_SetRenderDrawColor(renderer, 24, 70, 206, 0);
+        }
+
+        SDL_RenderFillRect(renderer, &playerShots[i].rect);
+    }
+}
+
+/**
+ * Draw the opponents's made shots
+ */
+void drawOpponentShots(SDL_Renderer * renderer)
+{
+    for (int i = 0; i < opponentShotsCount; i++) {
+        if (opponentShots[i].isHit) {
+            SDL_SetRenderDrawColor(renderer, 160, 18, 18, 0);
+        } else {
+            SDL_SetRenderDrawColor(renderer, 24, 70, 206, 0);
+        }
+
+        SDL_RenderFillRect(renderer, &opponentShots[i].rect);
     }
 }
