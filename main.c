@@ -690,19 +690,34 @@ void shootAtPlayer(Ship * playerShips)
      */
     
     int shotX, shotY, shotXEnd, shotYEnd;
-    bool doOverlap  = false;
-    bool isHit      = false;
+    bool doOverlap    = false;
+    bool isHit        = false;
+    bool isUniqueShot = false;
 
-    // Make a random shot somewhere in the player's field
-    shotX = randomNumber(playerGridOffsetX, playerGridOffsetX + (10 * cellSize));
-    shotX = (shotX / cellSize) * cellSize;
-    shotX = shotX + 40;
-    shotXEnd = shotX + cellSize;
-    
-    shotY = randomNumber(gridOffsetY, gridOffsetY + (10 * cellSize));
-    shotY = (shotY / cellSize) * cellSize;
-    shotY = shotY + 40;
-    shotYEnd = shotY + cellSize;
+    while (!isUniqueShot)
+    {
+        // Make a random shot somewhere in the player's field
+        shotX = randomNumber(playerGridOffsetX, playerGridOffsetX + (9 * cellSize));
+        shotX = (shotX / cellSize) * cellSize;
+        shotX = shotX + 40;
+        shotXEnd = shotX + cellSize;
+        
+        shotY = randomNumber(gridOffsetY, gridOffsetY + (9 * cellSize));
+        shotY = (shotY / cellSize) * cellSize;
+        shotY = shotY + 40;
+        shotYEnd = shotY + cellSize;
+
+        isUniqueShot = true;
+
+        for (int shots = 0; shots < opponentShotsCount; shots++)
+        {
+            if (opponentShots[shots].rect.x == shotX && opponentShots[shots].rect.y == shotY) {
+                isUniqueShot = false;
+                break;
+            }
+        }
+    }
+
 
     // Now check if we hit or miss
     for (int i = 0; i < 10; i++)
