@@ -201,7 +201,7 @@ int main()
         // Draw the title text
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
-        drawOpponentShips(renderer, opponentShips);
+        // drawOpponentShips(renderer, opponentShips);
         drawPlacedShips(renderer, playerShips);
 
         if (!isShooting) {
