@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <time.h>
 #include "include/game.h"
 #include "include/input.h"
 #include "include/window.h"
@@ -28,6 +29,7 @@ void game_run(struct game * game)
 
 void game_init(struct game * game)
 {
+    srand(time(NULL));
     SDL_Init(SDL_INIT_EVERYTHING);
 
     game->is_running = true;
