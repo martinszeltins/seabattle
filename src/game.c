@@ -24,10 +24,11 @@ void game_run(struct game * game)
 
     // Title
         TTF_Font * font;
-        char * font_path = "resources/fonts/the_california_hustle.ttf";
+        char * font_path = "src/resources/fonts/the_california_hustle.ttf";
 
         font = TTF_OpenFont(font_path, 80);
-        // setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &game->title.texture, &game->title.rect);
+
+        setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &game->title.texture, &game->title.rect);
 
         // Draw title
         // SDL_RenderCopy(game->renderer, title_texture, NULL, &title_rect);
