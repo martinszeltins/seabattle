@@ -22,17 +22,6 @@ void game_run(struct game * game)
 {
     game_init(game);
 
-    // Title
-        TTF_Font * font;
-        char * font_path = "src/resources/fonts/the_california_hustle.ttf";
-
-        font = TTF_OpenFont(font_path, 80);
-
-        setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &game->title.texture, &game->title.rect);
-
-        // Draw title
-        // SDL_RenderCopy(game->renderer, title_texture, NULL, &title_rect);
-
     while (game->is_running) {
         input_handle(game);
         renderer_draw(game);
@@ -50,6 +39,20 @@ void game_init(struct game * game)
     game->is_running = true;
     game->window = window_create();
     game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED);
+    game->title = game_set_title(game);
+}
+
+text game_set_title(struct game *game)
+{
+    char * font_path = "src/resources/fonts/the_california_hustle.ttf";
+
+    text title;
+    TTF_Font * font;
+    font = TTF_OpenFont(font_path, 80);
+
+    setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &title.texture, &title.rect);
+
+    return title;
 }
 
 void game_quit(struct game * game)

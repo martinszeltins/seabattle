@@ -24,5 +24,6 @@ void game_run(struct game * game);
 void game_init(struct game * game);
 int game_terminate(struct game * game);
 void game_quit(struct game *game);
+text game_set_title(struct game *game);
 
 #endif
