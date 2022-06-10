@@ -10,6 +10,7 @@ void renderer_draw(struct game * game)
     renderer_draw_title(game);
     renderer_draw_placed_ships(game);
     renderer_draw_placing_ship(game);
+    renderer_draw_player_aim(game);
     renderer_draw_grid_lines(game);
 
     SDL_RenderPresent(game->renderer);
@@ -99,4 +100,12 @@ void renderer_draw_placing_ship(struct game *game)
     }
 
     SDL_RenderFillRect(game->renderer, &game->player_ships[game->placing_ship_index].rect);
+}
+
+void renderer_draw_player_aim(struct game *game)
+{
+    if (game->is_shooting == true) return;
+    
+    SDL_SetRenderDrawColor(game->renderer, 187, 74, 0, 0);
+    SDL_RenderFillRect(game->renderer, &game->player_cursor);
 }

@@ -9,5 +9,6 @@ void renderer_draw_title(struct game * game);
 void renderer_draw_grid_lines(struct game * game);
 void renderer_draw_placed_ships(struct game * game);
 void renderer_draw_placing_ship(struct game *game);
+void renderer_draw_player_aim(struct game *game);
 
 #endif
