@@ -42,6 +42,19 @@ void game_init(struct game * game)
     game->window = window_create();
     game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED);
     game->title = game_get_title(game);
+    game->cell_size = 60;
+    game->grid_width = 10;
+    game->grid_height = 10;
+    game->grid_offset_y = 280;
+    game->placing_ship_index = 0;
+    game->player_grid_offset_x = 280;
+    game->opponent_grid_offset_x = 1050;
+    game->placed_ships = 0;
+    game->player_hits = 0;
+    game->opponent_hits = 0;
+    game->player_shots_count = 0;
+    game->opponent_shots_count = 0;
+    game->is_shooting = false;
 }
 
 text game_get_title(struct game *game)
