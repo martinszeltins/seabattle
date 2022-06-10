@@ -7,6 +7,7 @@
 #include "include/input.h"
 #include "include/window.h"
 #include "include/renderer.h"
+#include "include/gameplay.h"
 
 struct game * game_create()
 {
@@ -21,6 +22,7 @@ struct game * game_create()
 void game_run(struct game * game)
 {
     game_init(game);
+    gameplay_start(game);
 
     while (game->is_running) {
         input_handle(game);
