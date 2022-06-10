@@ -65,7 +65,7 @@ int game_terminate(struct game * game)
     if (game == NULL) return 0;
 
     SDL_DestroyWindow(game->window);
-	SDL_DestroyRenderer(game->renderer);
+    SDL_DestroyRenderer(game->renderer);
     free(game);
     
     return 0;
