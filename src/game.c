@@ -1,5 +1,8 @@
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <time.h>
+#include <stdlib.h>
+#include "include/sdl.h"
+#include <SDL2/SDL_ttf.h>
 #include "include/game.h"
 #include "include/input.h"
 #include "include/window.h"
@@ -19,6 +22,16 @@ void game_run(struct game * game)
 {
     game_init(game);
 
+    // Title
+        TTF_Font * font;
+        char * font_path = "resources/fonts/the_california_hustle.ttf";
+
+        font = TTF_OpenFont(font_path, 80);
+        // setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &game->title.texture, &game->title.rect);
+
+        // Draw title
+        // SDL_RenderCopy(game->renderer, title_texture, NULL, &title_rect);
+
     while (game->is_running) {
         input_handle(game);
         renderer_draw(game);
@@ -31,6 +44,7 @@ void game_init(struct game * game)
 {
     srand(time(NULL));
     SDL_Init(SDL_INIT_EVERYTHING);
+    TTF_Init();
 
     game->is_running = true;
     game->window = window_create();

@@ -1,13 +1,19 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <stdbool.h>
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
 
+typedef struct {
+    SDL_Rect rect;
+    SDL_Texture * texture;
+} text;
+
 struct game {
+    text title;
     SDL_Window * window;
     SDL_Renderer * renderer;
     bool is_running;

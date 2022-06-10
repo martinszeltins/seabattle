@@ -1,6 +1,6 @@
 #include "include/game.h"
 
-int main(int argc, char **argv)
+int main()
 {
     struct game * game = game_create();
 
