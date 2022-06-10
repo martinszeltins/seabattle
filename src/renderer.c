@@ -6,6 +6,9 @@ void renderer_draw(struct game * game)
 {
     renderer_clear_screen(game->renderer);
 
+    // Render game title
+    SDL_RenderCopy(game->renderer, game->title.texture, NULL, &game->title.rect);
+
     // Test render a rect
         SDL_SetRenderDrawColor(game->renderer, 255, 255, 255, 0);
         SDL_Rect test_rect = {0, 0, 100, 50};
