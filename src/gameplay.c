@@ -1,8 +1,10 @@
 #include <math.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 #include "include/game.h"
 #include "include/util.h"
 #include "include/gameplay.h"
+#include "include/renderer.h"
 
 void gameplay_start(struct game * game)
 {
@@ -171,4 +173,150 @@ void gameplay_place_ship(struct game * game)
     } else {
         game->is_shooting = true;
     }
+}
+
+void gameplay_rotate_ship(struct game * game)
+{
+    if (game->player_ships[game->placing_ship_index].orientation == VERTICAL) {
+        if ((game->player_ships[game->placing_ship_index].rect.x + game->player_ships[game->placing_ship_index].rect.h) > game->player_grid_offset_x + (10 * game->cell_size)) {
+            game->player_ships[game->placing_ship_index].rect.x = game->player_ships[game->placing_ship_index].rect.x - game->player_ships[game->placing_ship_index].rect.h + game->cell_size;
+
+            int h = game->player_ships[game->placing_ship_index].rect.h;
+
+            game->player_ships[game->placing_ship_index].rect.h = game->player_ships[game->placing_ship_index].rect.w;
+            game->player_ships[game->placing_ship_index].rect.w = h;
+            game->player_ships[game->placing_ship_index].orientation = HORIZONTAL;
+        } else {
+            int h = game->player_ships[game->placing_ship_index].rect.h;
+
+            game->player_ships[game->placing_ship_index].rect.h = game->player_ships[game->placing_ship_index].rect.w;
+            game->player_ships[game->placing_ship_index].rect.w = h;
+            game->player_ships[game->placing_ship_index].orientation = HORIZONTAL;
+        }
+    } else if (game->player_ships[game->placing_ship_index].orientation == HORIZONTAL) {
+        if ((game->player_ships[game->placing_ship_index].rect.y + game->player_ships[game->placing_ship_index].rect.w) > game->grid_offset_y + (10 * game->cell_size)) {
+            game->player_ships[game->placing_ship_index].rect.y = game->player_ships[game->placing_ship_index].rect.y - game->player_ships[game->placing_ship_index].rect.w + game->cell_size;
+
+            int h = game->player_ships[game->placing_ship_index].rect.h;
+
+            game->player_ships[game->placing_ship_index].rect.h = game->player_ships[game->placing_ship_index].rect.w;
+            game->player_ships[game->placing_ship_index].rect.w = h;
+            game->player_ships[game->placing_ship_index].orientation = VERTICAL;
+        } else {
+            int h = game->player_ships[game->placing_ship_index].rect.h;
+
+            game->player_ships[game->placing_ship_index].rect.h = game->player_ships[game->placing_ship_index].rect.w;
+            game->player_ships[game->placing_ship_index].rect.w = h;
+            game->player_ships[game->placing_ship_index].orientation = VERTICAL;
+        }
+    }
+}
+
+void gameplay_shoot_at_component(struct game * game)
+{
+    bool do_overlap  = false;
+    bool is_hit      = false;
+
+    for (int i = 0; i < 10; i++) {
+        int player_aim_x     = game->player_aim.x;
+        int player_cursor_y  = game->player_aim.y;
+        int player_aim_x_end = player_aim_x + game->player_aim.w;
+        int player_aim_y_end = player_cursor_y + game->player_aim.h;
+
+        int ship_x_start = game->opponent_ships[i].rect.x;
+        int ship_x_end   = game->opponent_ships[i].rect.x + game->opponent_ships[i].rect.w;
+        int ship_y_start = game->opponent_ships[i].rect.y;
+        int ship_y_end   = game->opponent_ships[i].rect.y + game->opponent_ships[i].rect.h;
+
+        do_overlap = util_rectangles_overlap(
+            player_aim_x, player_aim_x_end, player_cursor_y, player_aim_y_end,
+            ship_x_start, ship_x_end, ship_y_start, ship_y_end
+        );
+
+        if (do_overlap) {
+            is_hit = true;
+            break;
+        }
+    }
+
+    game->player_shots[game->player_shots_count].rect.x = game->player_aim.x;
+    game->player_shots[game->player_shots_count].rect.y = game->player_aim.y;
+    game->player_shots[game->player_shots_count].rect.w = game->player_aim.w;
+    game->player_shots[game->player_shots_count].rect.h = game->player_aim.h;
+
+    if (is_hit) {
+        game->player_hits++;
+        game->player_shots[game->player_shots_count].is_hit = true;
+    } else {
+        game->player_shots[game->player_shots_count].is_hit = false;
+    }
+
+    game->player_shots_count++;
+
+    SDL_Delay(500);
+
+    gameplay_shoot_at_player(game);
+}
+
+void gameplay_shoot_at_player(struct game * game)
+{
+    int shot_x, shot_y, shot_x_end, shot_y_end;
+
+    bool do_overlap     = false;
+    bool is_hit         = false;
+    bool is_unique_shot = false;
+
+    while (!is_unique_shot) {
+        // Make a random shot somewhere in the player's field
+        shot_x = util_rnd_number(game->player_grid_offset_x, game->player_grid_offset_x + (9 * game->cell_size));
+        shot_x = (shot_x / game->cell_size) * game->cell_size;
+        shot_x = shot_x + 40;
+        shot_x_end = shot_x + game->cell_size;
+        
+        shot_y = util_rnd_number(game->grid_offset_y, game->grid_offset_y + (9 * game->cell_size));
+        shot_y = (shot_y / game->cell_size) * game->cell_size;
+        shot_y = shot_y + 40;
+        shot_y_end = shot_y + game->cell_size;
+
+        is_unique_shot = true;
+
+        for (int shots = 0; shots < game->opponent_shots_count; shots++) {
+            if (game->opponent_shots[shots].rect.x == shot_x && game->opponent_shots[shots].rect.y == shot_y) {
+                is_unique_shot = false;
+                break;
+            }
+        }
+    }
+
+    // Now check if we hit or miss
+    for (int i = 0; i < 10; i++) {
+        int ship_x_start = game->player_ships[i].rect.x;
+        int ship_x_end   = game->player_ships[i].rect.x + game->player_ships[i].rect.w;
+        int ship_y_start = game->player_ships[i].rect.y;
+        int ship_y_end   = game->player_ships[i].rect.y + game->player_ships[i].rect.h;
+
+        do_overlap = util_rectangles_overlap(
+            shot_x, shot_x_end, shot_y, shot_y_end,
+            ship_x_start, ship_x_end, ship_y_start, ship_y_end
+        );
+
+        if (do_overlap) {
+            is_hit = true;
+            break;
+        }
+    }
+
+    game->opponent_shots[game->opponent_shots_count].rect.x = shot_x;
+    game->opponent_shots[game->opponent_shots_count].rect.y = shot_y;
+    game->opponent_shots[game->opponent_shots_count].rect.w = game->cell_size;
+    game->opponent_shots[game->opponent_shots_count].rect.h = game->cell_size;
+
+    if (is_hit) {
+        game->opponent_hits++;
+        game->opponent_shots[game->opponent_shots_count].is_hit = true;
+    } else {
+        game->opponent_shots[game->opponent_shots_count].is_hit = false;
+    }
+
+    game->opponent_shots_count++;
 }
