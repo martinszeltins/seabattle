@@ -12,6 +12,7 @@ void renderer_draw(struct game * game)
     renderer_draw_placing_ship(game);
     renderer_draw_player_aim(game);
     renderer_draw_player_shots(game);
+    renderer_draw_opponent_shots(game);
     renderer_draw_grid_lines(game);
 
     SDL_RenderPresent(game->renderer);
@@ -105,7 +106,7 @@ void renderer_draw_placing_ship(struct game *game)
 
 void renderer_draw_player_aim(struct game *game)
 {
-    if (game->is_shooting == true) return;
+    if (game->is_shooting == false) return;
 
     SDL_SetRenderDrawColor(game->renderer, 187, 74, 0, 0);
     SDL_RenderFillRect(game->renderer, &game->player_aim);
@@ -121,5 +122,18 @@ void renderer_draw_player_shots(struct game *game)
         }
 
         SDL_RenderFillRect(game->renderer, &game->player_shots[i].rect);
+    }
+}
+
+void renderer_draw_opponent_shots(struct game *game)
+{
+    for (int i = 0; i < game->opponent_shots_count; i++) {
+        if (game->opponent_shots[i].is_hit) {
+            SDL_SetRenderDrawColor(game->renderer, 160, 18, 18, 0);
+        } else {
+            SDL_SetRenderDrawColor(game->renderer, 24, 70, 206, 0);
+        }
+
+        SDL_RenderFillRect(game->renderer, &game->opponent_shots[i].rect);
     }
 }

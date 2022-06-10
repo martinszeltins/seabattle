@@ -11,5 +11,6 @@ void renderer_draw_placed_ships(struct game * game);
 void renderer_draw_placing_ship(struct game * game);
 void renderer_draw_player_aim(struct game * game);
 void renderer_draw_player_shots(struct game * game);
+void renderer_draw_opponent_shots(struct game *game);
 
 #endif
