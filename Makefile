@@ -10,7 +10,7 @@ CFLAGS := `sdl2-config --libs --cflags` -w -ggdb3 -O0 --std=c99 -Wall -lSDL2_ima
 HDRS :=
 
 # add source files here
-SRCS := src/main.c src/game.c src/window.c src/renderer.c src/input.c src/sdl.c src/gameplay.c
+SRCS := src/main.c src/game.c src/window.c src/renderer.c src/input.c src/sdl.c src/gameplay.c src/util.c
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)
