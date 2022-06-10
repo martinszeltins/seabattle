@@ -5,5 +5,6 @@
 
 void renderer_draw(struct game * game);
 void renderer_clear_screen(SDL_Renderer * renderer);
+void renderer_draw_title(struct game *game);
 
 #endif

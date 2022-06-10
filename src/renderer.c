@@ -5,17 +5,9 @@
 void renderer_draw(struct game * game)
 {
     renderer_clear_screen(game->renderer);
-
-    // Render game title
-    SDL_RenderCopy(game->renderer, game->title.texture, NULL, &game->title.rect);
-
-    // Test render a rect
-        SDL_SetRenderDrawColor(game->renderer, 255, 255, 255, 0);
-        SDL_Rect test_rect = {0, 0, 100, 50};
-        SDL_RenderFillRect(game->renderer, &test_rect);
+    renderer_draw_title(game);
 
     SDL_RenderPresent(game->renderer);
-
     SDL_Delay(1000 / 25);
 }
 
@@ -23,4 +15,9 @@ void renderer_clear_screen(SDL_Renderer * renderer)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
+}
+
+void renderer_draw_title(struct game * game)
+{
+    SDL_RenderCopy(game->renderer, game->title.texture, NULL, &game->title.rect);
 }
