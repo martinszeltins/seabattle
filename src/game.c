@@ -39,10 +39,10 @@ void game_init(struct game * game)
     game->is_running = true;
     game->window = window_create();
     game->renderer = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED);
-    game->title = game_set_title(game);
+    game->title = game_get_title(game);
 }
 
-text game_set_title(struct game *game)
+text game_get_title(struct game *game)
 {
     char * font_path = "src/resources/fonts/the_california_hustle.ttf";
 
