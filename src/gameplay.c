@@ -320,3 +320,59 @@ void gameplay_shoot_at_player(struct game * game)
 
     game->opponent_shots_count++;
 }
+
+void gameplay_player_move_ship_up(struct game *game)
+{
+    if (game->player_ships[game->placing_ship_index].rect.y != game->grid_offset_y) {
+        game->player_ships[game->placing_ship_index].rect.y = game->player_ships[game->placing_ship_index].rect.y - game->cell_size;
+    }
+}
+
+void gameplay_player_move_aim_up(struct game *game)
+{
+    if (game->player_aim.y != game->grid_offset_y) {
+        game->player_aim.y = game->player_aim.y - game->cell_size;
+    }
+}
+
+void gameplay_player_move_ship_down(struct game * game)
+{
+    if ((game->player_ships[game->placing_ship_index].rect.y + game->player_ships[game->placing_ship_index].rect.h) < game->grid_offset_y + (10 * game->cell_size)) {
+        game->player_ships[game->placing_ship_index].rect.y = game->player_ships[game->placing_ship_index].rect.y + game->cell_size;
+    }
+}
+
+void gameplay_player_move_aim_down(struct game * game)
+{
+    if ((game->player_aim.y + game->player_aim.h) < game->grid_offset_y + (10 * game->cell_size)) {
+        game->player_aim.y = game->player_aim.y + game->cell_size;
+    }
+}
+
+void gameplay_player_move_ship_left(struct game * game)
+{
+    if (game->player_ships[game->placing_ship_index].rect.x != game->player_grid_offset_x) {
+        game->player_ships[game->placing_ship_index].rect.x = game->player_ships[game->placing_ship_index].rect.x - game->cell_size;
+    }
+}
+
+void gameplay_player_move_aim_left(struct game * game)
+{
+    if (game->player_aim.x != game->opponent_grid_offset_x) {
+        game->player_aim.x = game->player_aim.x - game->cell_size;
+    }
+}
+
+void gameplay_player_move_ship_right(struct game * game)
+{
+    if ((game->player_ships[game->placing_ship_index].rect.x + game->player_ships[game->placing_ship_index].rect.w) < game->player_grid_offset_x + (10 * game->cell_size)) {
+        game->player_ships[game->placing_ship_index].rect.x = game->player_ships[game->placing_ship_index].rect.x + game->cell_size;
+    }
+}
+
+void gameplay_player_move_aim_right(struct game * game)
+{
+    if ((game->player_aim.x + game->player_aim.w) < game->opponent_grid_offset_x + (10 * game->cell_size)) {
+        game->player_aim.x = game->player_aim.x + game->cell_size;
+    }
+}
