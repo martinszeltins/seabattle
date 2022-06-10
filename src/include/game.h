@@ -35,7 +35,7 @@ struct game {
     text title;
     SDL_Window * window;
     SDL_Renderer * renderer;
-    SDL_Rect player_cursor;
+    SDL_Rect player_aim;
     shot player_shots[100];
     shot opponent_shots[100];
     ship player_ships[10];

@@ -8,7 +8,7 @@ void gameplay_start(struct game * game)
 {
     gameplay_add_player_ships(game);
     gameplay_add_opponent_ships(game);
-    gameplay_reset_player_cursor(game);
+    gameplay_reset_player_aim(game);
 }
 
 void gameplay_add_player_ships(struct game * game)
@@ -127,10 +127,10 @@ void gameplay_add_opponent_ships(struct game * game)
     }
 }
 
-void gameplay_reset_player_cursor(struct game *game)
+void gameplay_reset_player_aim(struct game *game)
 {
-    game->player_cursor.x = game->opponent_grid_offset_x;
-    game->player_cursor.y = game->grid_offset_y;
-    game->player_cursor.w = game->cell_size;
-    game->player_cursor.h = game->cell_size;
+    game->player_aim.x = game->opponent_grid_offset_x;
+    game->player_aim.y = game->grid_offset_y;
+    game->player_aim.w = game->cell_size;
+    game->player_aim.h = game->cell_size;
 }
