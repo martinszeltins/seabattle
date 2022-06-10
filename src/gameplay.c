@@ -127,10 +127,48 @@ void gameplay_add_opponent_ships(struct game * game)
     }
 }
 
-void gameplay_reset_player_aim(struct game *game)
+void gameplay_reset_player_aim(struct game * game)
 {
     game->player_aim.x = game->opponent_grid_offset_x;
     game->player_aim.y = game->grid_offset_y;
     game->player_aim.w = game->cell_size;
     game->player_aim.h = game->cell_size;
+}
+
+void gameplay_place_ship(struct game * game) 
+{
+    bool ships_overlap = false;
+
+    // Check if the new ship overlaps another
+    for (int i = 0; i < 10; i++) {
+        if (game->player_ships[i].is_placed) {
+            int placing_ship_x     = game->player_ships[game->placing_ship_index].rect.x;
+            int placing_ship_y     = game->player_ships[game->placing_ship_index].rect.y;
+            int placing_ship_x_end = placing_ship_x + game->player_ships[game->placing_ship_index].rect.w;
+            int placing_ship_y_end = placing_ship_y + game->player_ships[game->placing_ship_index].rect.h;
+
+            int outer_boundary_x_start = game->player_ships[i].rect.x - game->cell_size;
+            int outer_boundary_x_end   = game->player_ships[i].rect.x + game->player_ships[i].rect.w + game->cell_size;
+            int outer_boundary_y_start = game->player_ships[i].rect.y - game->cell_size;
+            int outer_boundary_y_end   = game->player_ships[i].rect.y + game->player_ships[i].rect.h + game->cell_size;
+
+            ships_overlap = util_rectangles_overlap(
+                placing_ship_x, placing_ship_x_end, placing_ship_y, placing_ship_y_end,
+                outer_boundary_x_start, outer_boundary_x_end, outer_boundary_y_start, outer_boundary_y_end
+            );
+
+            if (ships_overlap) {
+                return;
+            }
+        }
+    }
+
+    game->player_ships[game->placing_ship_index].is_placed = true;
+
+    if (game->placed_ships < 9) {
+        game->placed_ships++;
+        game->placing_ship_index++;
+    } else {
+        game->is_shooting = true;
+    }
 }
