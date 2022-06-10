@@ -2,7 +2,10 @@
 Seabattle 2.0
 
 Author: Martins Zeltins <martins@martinsz.lv>
-Date: June 10, 2022
+
+Version history:
+2.0: June 10, 2022
+1.0: May 1, 2021
 ````
 
 ## Instructions
