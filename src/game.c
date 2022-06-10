@@ -66,7 +66,10 @@ int game_terminate(struct game * game)
 
     SDL_DestroyWindow(game->window);
     SDL_DestroyRenderer(game->renderer);
+    SDL_DestroyTexture(game->title.texture);
+    TTF_Quit();
     free(game);
-    
+    SDL_Quit();
+
     return 0;
 }
