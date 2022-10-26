@@ -34,8 +34,7 @@ void game_run(struct game * game)
 void game_init(struct game * game)
 {
     srand(time(NULL));
-    SDL_Init(SDL_INIT_EVERYTHING);
-    TTF_Init();
+    sdl_init();
 
     game->is_running = true;
     game->window = window_create();
