@@ -2,7 +2,13 @@
 #include <SDL2/SDL_ttf.h>
 #include "include/sdl.h"
 
-void set_text_texture_and_rect(SDL_Renderer * renderer, int x, int y, char * text,
+void sdl_init()
+{
+    SDL_Init(SDL_INIT_EVERYTHING);
+    TTF_Init();
+}
+
+void sdl_set_text_texture_and_rect(SDL_Renderer * renderer, int x, int y, char * text,
                            TTF_Font * font, SDL_Texture ** textTexture, SDL_Rect * textRect)
 {
     int textWidth;
