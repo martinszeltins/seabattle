@@ -4,29 +4,23 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
-
 typedef struct {
     SDL_Rect rect;
     SDL_Texture * texture;
 } text;
 
-typedef enum
-{
+typedef enum {
     HORIZONTAL,
     VERTICAL
 } orientation;
 
-typedef struct
-{
+typedef struct {
     SDL_Rect rect;
     bool is_placed;
     orientation orientation;
 } ship;
 
-typedef struct
-{
+typedef struct {
     SDL_Rect rect;
     bool is_hit;
 } shot;
