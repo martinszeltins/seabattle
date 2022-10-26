@@ -55,7 +55,7 @@ void game_init(struct game * game)
     game->is_shooting = false;
 }
 
-text game_get_title(struct game *game)
+text game_get_title(struct game * game)
 {
     char * font_path = "src/resources/fonts/the_california_hustle.ttf";
 
