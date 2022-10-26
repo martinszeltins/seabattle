@@ -64,7 +64,7 @@ text game_get_title(struct game *game)
     TTF_Font * font;
     font = TTF_OpenFont(font_path, 80);
 
-    setTextTextureAndRect(game->renderer, 760, 60, "Seabattle 2.0", font, &title.texture, &title.rect);
+    set_text_texture_and_rect(game->renderer, 760, 60, "Seabattle 2.0", font, &title.texture, &title.rect);
 
     return title;
 }
