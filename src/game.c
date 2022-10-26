@@ -11,10 +11,9 @@
 
 struct game * game_create()
 {
-    struct game *game = NULL;
+    struct game * game;
 
-    game = (struct game *)malloc(sizeof(struct game));
-    bzero(game, sizeof(struct game));
+    game = malloc(sizeof(struct game));
 
     return game;
 }
