@@ -19,7 +19,7 @@ sudo apt-get install -y build-essential clang libsdl2-2.0-0 libsdl2-dev libsdl2-
 **Compile and run**
 
 ````
-$ make && ./seabattle && make clean
+$ make && ./seabattle && make clean -fX
 
 P.S. make clean will remove all object files and the executable so git tree will be clean.
 ````
