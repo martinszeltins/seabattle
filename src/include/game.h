@@ -4,11 +4,13 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+// Struct for displaying text on screen
 typedef struct {
     SDL_Rect rect;
     SDL_Texture * texture;
 } text;
 
+// Ship orientation
 typedef enum {
     HORIZONTAL,
     VERTICAL
